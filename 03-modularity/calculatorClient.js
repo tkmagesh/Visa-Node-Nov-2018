@@ -8,10 +8,12 @@ console.log(calculator.subtract(x,y));
 console.log(calculator.multiply(x,y));
 console.log(calculator.divide(x,y));
 
-try{
-	console.log(calculator.divideAsync(10,2, function(result){
+
+console.log(calculator.divideAsync(10,2, function(err, result){
+	if (err){
+		console.log(err.message);
+	} else  {
 		console.log(result);
-	}));
-} catch (e){
-	console.log(e.message);
-}
+	}
+}));
+console.log('end of calculatorClient.js')
