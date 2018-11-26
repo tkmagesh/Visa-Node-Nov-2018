@@ -9,6 +9,17 @@ var calculator = {
 		return x * y;
 	},
 	divide : function(x,y){
+		if (y === 0)
+			throw new Error('Invalid arguments');
 		return x / y;
+	},
+	divideAsync : function(x,y, resultCallback){
+		setTimeout(function(){
+			if (y === 0)
+				throw new Error('Invalid arguments');
+			resultCallback(x / y);
+		}, 3000);
 	}
 };
+console.log('@Calculator.js - calculator -> ', calculator);
+module.exports = calculator;
