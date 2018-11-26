@@ -13,10 +13,12 @@
 
 			function onBtnDoWorkClick(){
 				displayMessage('Work Started');
+				setTimeout(triggerWork);
+			}
+			function triggerWork(){
 				doWork();
 				displayMessage('Work Completed');
 			}
-
 			function displayMessage(msg){
 				var divMessages = document.getElementById('divMessages');
 				divMessages.innerHTML += msg + '<br/>';
