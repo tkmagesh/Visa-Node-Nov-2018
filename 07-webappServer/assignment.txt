@@ -1,0 +1,14 @@
+refactor the 'server.js' into the following files
+
+dataParser.js
+	url.parse
+	querystring.parse
+
+serverStatic.js
+	logic for serving static resource requests
+
+serveCalculator.js
+	logic for serving calculator requests
+
+notFoundHandler.js
+	serve 404
