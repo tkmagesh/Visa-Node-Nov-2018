@@ -14,7 +14,6 @@ module.exports = function(staticFolderPath){
 			resourcePath = path.join(staticFolderPath, resourceName);
 		if (isStatic(resourceName) && fs.existsSync(resourcePath)){
 			var stream = fs.createReadStream(resourcePath);
-			console.log(res.statusCode);
 			stream.pipe(res);
 			stream.on('close', next);
 		} else {
