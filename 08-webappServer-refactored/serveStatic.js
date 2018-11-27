@@ -8,14 +8,17 @@ function isStatic(resource){
 	return staticExtns.indexOf(resourceExtn) >= 0;
 }
 
-module.exports = function(req, res, next){
-	var resourceName = req.urlObj.pathname,
-		resourcePath = path.join(__dirname, resourceName);
-	if (isStatic(resourceName) && fs.existsSync(resourcePath)){
-		var stream = fs.createReadStream(resourcePath);
-		stream.pipe(res);
-		stream.on('end', next);
-	} else {
-		next();
+module.exports = function(staticFolderPath){
+	return function(req, res, next){
+		var resourceName = req.urlObj.pathname,
+			resourcePath = path.join(staticFolderPath, resourceName);
+		if (isStatic(resourceName) && fs.existsSync(resourcePath)){
+			var stream = fs.createReadStream(resourcePath);
+			console.log(res.statusCode);
+			stream.pipe(res);
+			stream.on('close', next);
+		} else {
+			next();
+		}
 	}
 }

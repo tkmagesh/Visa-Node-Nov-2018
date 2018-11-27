@@ -6,5 +6,12 @@ module.exports = function(req, res, next){
 	req['urlObj'] = urlObj;
 	var queryData = querystring.parse(urlObj.query);
 	req['queryData'] = queryData;
-	next();
+	var rawData = '';
+	req.on('data', function(chunk){
+		rawData += chunk;
+	});
+	req.on('end', function(){
+		req['bodyData'] = querystring.parse(rawData);
+		next();
+	});
 }
