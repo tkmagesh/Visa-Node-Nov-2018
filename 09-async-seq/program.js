@@ -73,7 +73,7 @@ function f4Async(next){
 	}, 5000);
 }
 
-function runAsync(){
+/*function runAsync(){
 	f1Async(function(){
 		f2Async(function(){
 			f3Async(function(){
@@ -81,6 +81,20 @@ function runAsync(){
 			});
 		});
 	});
+}*/
+
+var asyncFns = [f1Async, f2Async, f3Async, f4Async];
+function runAsync(){
+	function exec(fns){
+		var first = fns[0],
+			remaining = fns.slice(1),
+			next = function(){
+				exec(remaining);
+			};
+		if (typeof first === 'function')
+			first(next);
+	}
+	exec(asyncFns);
 }
 
 module.exports['runAsync'] = runAsync;
