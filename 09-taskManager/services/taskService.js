@@ -1,74 +1,95 @@
 var taskdb = require('./taskdb');
 
-function getAll(callback){
-	taskdb.readAll(function(err, tasks){
-		callback(err,tasks);
-	});
+function getAll(){
+	return taskdb.readAll();
 }
 
-function addNew(newTaskName, callback){
-	taskdb.readAll(function(err, tasks){
-		var newTaskId = tasks.reduce(function(result, task){
-			return result > task.id ? result : task.id;
-		}, 0) + 1;
-		var newTask = {
-			id : newTaskId,
-			name : newTaskName
-		};
-		tasks.push(newTask);
-		taskdb.save(tasks, function(err, result){
-			if (err){
-				callback(err, null);
-			} else {
-				callback(null, newTask);
+function addNew(newTaskName){
+	return taskdb
+		.readAll()
+		.then(function(tasks){
+			var newTaskId = tasks.reduce(function(result, task){
+				return result > task.id ? result : task.id;
+			}, 0) + 1;
+			var newTask = {
+				id : newTaskId,
+				name : newTaskName
+			};
+			tasks.push(newTask);
+			return taskdb
+				.save(tasks)
+				.then(function(){
+					return newTask;
+				});
+		})
+}
+
+/*function update(taskIdToUpdate, updatedTask){
+	return taskdb.readAll()
+		.then(function(tasks){
+			var taskToUpdate = tasks.find(function(task){
+				return task.id === taskIdToUpdate;
+			});
+			if (!taskToUpdate){
+				throw new Error('task doesnot exist');
 			}
-			
-		});
-	})
-	
-}
-
-function update(taskIdToUpdate, updatedTask, callback){
-	taskdb.readAll(function(err, tasks){
-		var taskToUpdate = tasks.find(function(task){
-			return task.id === taskIdToUpdate;
-		});
-		if (taskToUpdate){
 			tasks = tasks.map(function(task){
 				return task.id === taskIdToUpdate ? updatedTask : task;
 			});
-			taskdb.save(tasks, function(err, result){
-				if (err){
-					callback(err);
-				} else {
-					callback(null, updatedTask);
-				}
-			})
-			
-		} else {
-			callback(new Error('task doesnot exist'));
-		}
-	});
+			return taskdb
+				.save(tasks)
+				.then(function(result){
+					return updatedTask;
+				});
+		});
+
+}*/
+
+function update(taskIdToUpdate, updatedTask){
+	return taskdb
+		.readAll()
+		.then(function(tasks){
+			var taskToUpdate = tasks.find(function(task){
+				return task.id === taskIdToUpdate;
+			});
+			if (!taskToUpdate){
+				throw new Error('task doesnot exist');
+			}
+			return {
+				tasks : tasks, 
+				taskToUpdate : taskToUpdate
+			};
+		})
+		.then(function(result){
+			var tasks = result.tasks,
+				taskToUpdate = result.taskToUpdate;
+			tasks = tasks.map(function(task){
+				return task.id === taskIdToUpdate ? updatedTask : task;
+			});
+			return taskdb
+				.save(tasks)
+				.then(function(result){
+					return updatedTask;
+				});
+		});
+
 }
 
 function remove(taskIdToRemove, callback){
-	taskdb.readAll(function(err, tasks){
-		var taskToDelete = tasks.find(function(task){
-			return task.id === taskIdToRemove;
-		}); 
+	return taskdb.readAll()
+		.then(function(tasks){
+			var taskToDelete = tasks.find(function(task){
+				return task.id === taskIdToRemove;
+			}); 
 
-
-		if (taskToDelete){
+			if (!taskToDelete){
+				throw new Error('task doesnot exist')
+			}
 			tasks = tasks.filter(function(task){
 				return task.id !== taskIdToRemove;
 			});
-			taskdb.save(tasks, function(err, result){
-				callback(err, result);
-			});
-		} else {
-			callback(new Error('task doesnot exist'));
-		}
-	})
+			return taskdb.save(tasks);
+		});
 }
 
 module.exports = {
