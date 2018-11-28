@@ -11,29 +11,37 @@ router.get('/', function(req, res, next){
 
 router.post('/', function(req, res, next){
 	var taskName = req.body.newTaskName;
-	var newTask = taskService.addNew(taskName);
-	res.status(201).json(newTask);
+	taskService.addNew(taskName, function(err, newTask){
+		if (err){
+			res.status(500).end();
+			return;
+		}	
+		res.status(201).json(newTask);
+	});
+	
 });
 
 router.put('/:id', function(req, res, next){
 	var taskIdToUpdate = parseInt(req.params.id);
 	var updatedTask = req.body;
-	try{
-		taskService.update(taskIdToUpdate, updatedTask);
-		res.status(200).json(updatedTask);
-	} catch (err) {
-		res.status(404).end();
-	}
+	taskService.update(taskIdToUpdate, updatedTask, function(err, task){
+		if (err){
+			res.status(404).end();
+			return;
+		}
+		res.status(200).json(task);	
+	});
 });
 
 router.delete('/:id', function(req, res, next){
 	var taskIdToDelete = parseInt(req.params.id);
-	try{
-		taskService.remove(taskIdToDelete);
+	taskService.remove(taskIdToDelete, function(err, result){
+		if (err){
+			res.status(404).end();
+			return;	
+		}
 		res.status(200).json({});
-	} catch (err) {
-		res.status(404).end();
-	}
+	});		
 });
 
 module.exports = router;

@@ -16,10 +16,11 @@ function readAll(callback){
 	})
 }
 
-function save(/*....*/){
-
+function save(tasks, callback){
+	fs.writeFile(dbFile, JSON.stringify(tasks), callback)
 }
 
 module.exports = {
-	readAll : readAll
+	readAll : readAll,
+	save : save
 };
