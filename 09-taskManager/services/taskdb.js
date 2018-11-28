@@ -1,9 +1,15 @@
 //all persistence logic for tasks goes here
 var fs = require('fs'),
 	path = require('path'),
-	util = require('util');
+	util = require('util'),
+	bluebird = require('bluebird');
+
+
 
 var dbFile = path.join(__dirname, '../db/tasksdb.json');
+
+
+bluebird.promisifyAll(fs);
 
 /*function promisify(callbackBasedApi){
 	return function(){
@@ -37,8 +43,8 @@ var dbFile = path.join(__dirname, '../db/tasksdb.json');
 }*/
 
 function readAll(){
-	var readFileAsync = util.promisify(fs.readFile);
-	return readFileAsync(dbFile, {encoding : 'utf8'})
+	//var readFileAsync = util.promisify(fs.readFile);
+	return fs.readFileAsync(dbFile, {encoding : 'utf8'})
 		.then(function(fileContents){
 			return JSON.parse(fileContents);
 		});
@@ -58,8 +64,8 @@ function readAll(){
 }*/
 
 function save(tasks){
-	var writeFileAsync = util.promisify(fs.writeFile);
-	return writeFileAsync(dbFile, JSON.stringify(tasks));
+	//var writeFileAsync = util.promisify(fs.writeFile);
+	return fs.writeFileAsync(dbFile, JSON.stringify(tasks));
 }
 
 module.exports = {
