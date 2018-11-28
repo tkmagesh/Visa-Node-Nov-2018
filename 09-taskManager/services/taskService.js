@@ -1,7 +1,9 @@
+var taskdb = require('./taskdb');
 
-
-function getAll(){
-	return tasks.slice(0);
+function getAll(callback){
+	taskdb.readAll(function(err, tasks){
+		callback(err,tasks);
+	});
 }
 
 function addNew(newTaskName){

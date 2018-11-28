@@ -4,7 +4,9 @@ var taskService = require('../services/taskService');
 
 
 router.get('/', function(req, res, next){
-	res.json(taskService.getAll());
+	taskService.getAll(function(err, tasks){
+		res.json(tasks);
+	});
 });
 
 router.post('/', function(req, res, next){
